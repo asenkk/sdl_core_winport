@@ -150,13 +150,18 @@ set QMAKESPEC=win32-msvc2010
 set PATH=%QTDIR%\bin;%PATH%
 
 
+rem ********************** Set other environment variables *********************
+
+
+rem set PATH="%~dp0doxygen";%PATH%
+
+
 rem ************************* Set CMake generator ******************************
 
 
-rem set _SDL_GEN="NMake Makefiles"
-set _SDL_GEN="Visual Studio 10"
-
-rem set PATH="%~dp0doxygen";%PATH%
+rem set CMAKE_GEN="NMake Makefiles"
+set CMAKE_GEN="Eclipse CDT4 - NMake Makefiles"
+rem set CMAKE_GEN="Visual Studio 10"
 
 
 rem ************************* Create build folder ******************************
@@ -216,7 +221,7 @@ shift
 
 @echo on
 pushd "%BUILDDIR%" > NUL
-cmake -G %_SDL_GEN% "-DQT_PORT=1" %SDL_ROOT% 
+cmake -G %CMAKE_GEN% "-DQT_PORT=1" %SDL_ROOT% 
 @echo off
 
 popd
@@ -231,13 +236,16 @@ exit /b 1
 
 rem ******************************** Build *************************************
 
+set BUILD_CMD=nmake
+IF %CMAKE_GEN%=="Visual Studio 10" set BUILD_CMD=msbuild smartDeviceLinkCore.sln
+
+@echo.
+@echo Now go to %BUILDDIR% and build the project with '%BUILD_CMD%'
 
 rem @echo on
 rem pushd "%BUILDDIR%" > NUL
-rem rem nmake
-rem msbuild smartDeviceLinkCore.sln
+
+rem %BUILD_CMD%
+
 rem @echo off
 rem popd
-
-@echo.
-@echo Now go to %BUILDDIR% and build the project with "msbuild smartDeviceLinkCore.sln"

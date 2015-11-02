@@ -65,7 +65,11 @@ set(SNAPSHOT_TAG 	"$ENV{SNAPSHOT_TAG}")
 
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  if (DEFINED QT_PORT)
+      set(ARCH_TYPE_OPTION	"x86")
+  else (DEFINED QT_PORT)
       set(ARCH_TYPE_OPTION	"x86_64")
+  endif (DEFINED QT_PORT)
 else ()
   if (ARCH_TYPE_OPTION)
     if (NOT (${ARCH_TYPE_OPTION} STREQUAL "x86") AND NOT (${ARCH_TYPE_OPTION} STREQUAL "armv7"))
@@ -169,7 +173,11 @@ project (${PROJECT})
 
 #ADD_DEPENDENCIES(${PROJECT} Policy)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+else (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  # AKirov: Need to add cmake modules for Windows may be...
+endif(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 # Please do not change compiler/linker flags if You do not know how particular
 # flag is handled by CMake
@@ -241,7 +249,19 @@ if (TIME_TESTER)
 endif()
 
 # TODO(AK): check current OS here
-add_definitions(-DOS_POSIX)
+message(STATUS "CMAKE_SYSTEM_NAME is " ${CMAKE_SYSTEM_NAME})
+if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  message(STATUS "Define OS_POSIX")
+  add_definitions(-DOS_POSIX)
+endif()
+
+
+if (DEFINED QT_PORT)
+  set(CMAKE_AUTOMOC ON)
+  find_package(Qt5Core REQUIRED)
+  add_definitions(-DQT_PORT)
+endif (DEFINED QT_PORT)
+
 
 if (EXTENDED_MEDIA_MODE)
 add_definitions(-DEXTENDED_MEDIA_MODE)

@@ -35,6 +35,8 @@
 
 #if defined(OS_POSIX)
 #include <pthread.h>
+#elif defined(QT_PORT)
+#include <QThread>
 #endif
 
 #include <ostream>
@@ -50,6 +52,8 @@ namespace threads {
 
 #if defined(OS_POSIX)
 typedef pthread_t PlatformThreadHandle;
+#elif defined(QT_PORT)
+
 #else
 #error Please implement thread for your OS
 #endif
